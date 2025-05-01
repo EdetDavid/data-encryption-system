@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Generate Key{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        Generate Encryption Key
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="key_name" class="form-label">Key Name:</label>
+                <input type="text" id="key_name" name="key_name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Generate Key</button>
+        </form>
+        {% if key_value %}
+            <div class="alert alert-success mt-3">Key Generated: {{ key_value }}</div>
+        {% elif error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

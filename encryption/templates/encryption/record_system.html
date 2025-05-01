@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Record System{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        Record System
+    </div>
+    <div class="card-body">
+        <h2>Generated Keys</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Key Name</th>
+                    <th>Key Value</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key in keys %}
+                <tr>
+                    <td>{{ key.key_name }}</td>
+                    <td>{{ key.key_value }}</td>
+                    <td>{{ key.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Encrypted Files</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>File Name</th>
+                    <th>Key Name</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in encrypted_files %}
+                <tr>
+                    <td>{{ file.file_name }}</td>
+                    <td>{{ file.key.key_name }}</td>
+                    <td>{{ file.created_at }}</td>
+                    <td>
+                        <a href="{{ file.encrypted_file.url }}" class="btn btn-sm btn-primary" download>Download</a>
+                        <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

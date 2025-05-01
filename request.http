@@ -1,0 +1,19 @@
+### REST Client requests for testing the encryption system
+
+# Generate Key
+POST http://127.0.0.1:8000/encryption/generate-key/
+Content-Type: application/x-www-form-urlencoded
+
+key_name=Dvooskid1234
+
+### Encrypt Data
+POST http://127.0.0.1:8000/encryption/encrypt-data/
+Content-Type: application/x-www-form-urlencoded
+
+data_name=my_password&data_value=Dvooskd001&key_name=Dvooskid1234
+
+### Decrypt Data
+POST http://127.0.0.1:8000/encryption/decrypt-data/
+Content-Type: application/x-www-form-urlencoded
+
+data_name=my_password&key_name=Dvooskid1234
