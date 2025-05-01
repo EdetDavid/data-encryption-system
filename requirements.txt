@@ -2,6 +2,6 @@ asgiref==3.8.1
 cffi==1.17.1
 cryptography==44.0.2
 Django==5.2
-gunicorn
+gunicorn==23.0.0
 pycparser==2.22
 sqlparse==0.5.3
