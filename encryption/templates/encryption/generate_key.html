@@ -3,18 +3,19 @@
 {% block title %}Generate Key{% endblock %}
 
 {% block content %}
-<div class="card">
+<div class="card shadow-sm mt-4">
     <div class="card-header bg-primary text-white">
         Generate Encryption Key
     </div>
     <div class="card-body">
-        <form method="POST">
+        <form method="POST" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="mb-3">
                 <label for="key_name" class="form-label">Key Name:</label>
                 <input type="text" id="key_name" name="key_name" class="form-control" required>
+                <div class="invalid-feedback">Please provide a key name.</div>
             </div>
-            <button type="submit" class="btn btn-success">Generate Key</button>
+            <button type="submit" class="btn btn-success w-100">Generate Key</button>
         </form>
         {% if key_value %}
             <div class="alert alert-success mt-3">Key Generated: {{ key_value }}</div>

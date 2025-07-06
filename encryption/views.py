@@ -6,14 +6,21 @@ from django.core.files.storage import FileSystemStorage
 from .models import EncryptionKey, EncryptedData, EncryptedFile
 from cryptography.fernet import Fernet
 import os
+from django.db import IntegrityError
 
 def generate_key(request):
     if request.method == 'POST':
         key_name = request.POST.get('key_name')
         if key_name:
             key_value = Fernet.generate_key().decode()
-            EncryptionKey.objects.create(key_name=key_name, key_value=key_value)
-            return render(request, 'encryption/generate_key.html', {'key_value': key_value})
+            try:
+                EncryptionKey.objects.create(key_name=key_name, key_value=key_value)
+                return render(request, 'encryption/generate_key.html', {'key_value': key_value})
+            except IntegrityError:
+                # Use Django messages framework for modal error
+                from django.contrib import messages
+                messages.error(request, f"Key name '{key_name}' already exists. Please choose a different name.")
+                return render(request, 'encryption/generate_key.html')
     return render(request, 'encryption/generate_key.html')
 
 def encrypt_data(request):
