@@ -1,0 +1,77 @@
+{% extends 'base.html' %} {% block content %}
+<div class="register-container">
+  <h2 class="register-title">Register</h2>
+  <form method="post" class="register-form">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for
+      ="id_username" class="form-label">Username</label>
+      <input
+        type="text"
+        name="username"
+        id="id_username"
+        class="form-control"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="id_password1" class="form-label">Password</label>
+      <input
+        type="password"
+        name="password1"
+        id="id_password1"
+        class="form-control"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="id_password2" class="form-label">Confirm Password</label>
+      <input
+        type="password"
+        name="password2"
+        id="id_password2"
+        class="form-control"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-block">Register</button>
+  </form>
+  <p class="mt-3">
+    Already have an account?
+    <a href="{% url 'custom_login' %}" class="btn btn-outline-info"
+      >Login here</a
+    >
+  </p>
+</div>
+<style>
+  .register-container {
+    max-width: 500px;
+    margin: 60px auto 0 auto;
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 36px 32px 32px 32px;
+    color: #f1f1f1;
+    font-family: "Montserrat", Arial, sans-serif;
+    text-align: left;
+  }
+  .register-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00e6d0;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 12px #00e6d088, 0 1px 0 #fff2;
+    text-align: center !important;
+  }
+  .register-form {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+
+  .register-form .btn-block {
+    width: 100%;
+    margin-top: 18px;
+  }
+</style>
+{% endblock %}
