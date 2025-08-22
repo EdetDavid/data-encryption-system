@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center bg-primary text-white py-5 rounded-3 mb-4">
+    <h1 class="display-4">Welcome to the Data Security System</h1>
+    <p class="lead">Protecting your sensitive data with advanced cryptographic techniques.</p>
+</div>
+<div class="row g-4">
+    <div class="col-12 col-md-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body">
+                <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Key Generation" class="mb-3 img-fluid" style="max-width: 100px; height: auto;">
+                <h5 class="card-title">Key Management</h5>
+                <p class="card-text">Generate and manage secure encryption keys effortlessly.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body">
+                <img src="https://cdn-icons-png.flaticon.com/512/3064/3064201.png" alt="Data Encryption" class="mb-3 img-fluid" style="max-width: 100px; height: auto;">
+                <h5 class="card-title">Data Encryption</h5>
+                <p class="card-text">Encrypt sensitive data to ensure confidentiality and security.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body">
+                <img src="https://cdn-icons-png.flaticon.com/512/3064/3064200.png" alt="Data Decryption" class="mb-3 img-fluid" style="max-width: 100px; height: auto;">
+                <h5 class="card-title">Data Decryption</h5>
+                <p class="card-text">Decrypt your data securely with authorized access.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

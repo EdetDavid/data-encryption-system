@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Generate Key{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        Generate Encryption Key
+    </div>
+    <div class="card-body">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="key_name" class="form-label">Key Name:</label>
+                <input type="text" id="key_name" name="key_name" class="form-control" required>
+                <div class="invalid-feedback">Please provide a key name.</div>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Generate Key</button>
+        </form>
+        
+        {% if key_value and success %}
+            <div class="alert alert-success mt-3">
+                <h5>Key Generated Successfully!</h5>
+                <div class="mt-2">
+                    <label class="form-label">Key Value:</label>
+                    <textarea class="form-control" rows="3" readonly>{{ key_value }}</textarea>
+                </div>
+                <small class="text-muted d-block mt-2">Store this key securely as it won't be shown again.</small>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

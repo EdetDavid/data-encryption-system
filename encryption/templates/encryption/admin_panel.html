@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-dashboard-container">
+  <h2 class="admin-title">Admin Dashboard</h2>
+  <div class="dashboard-summary">
+    <div><strong>Total Users:</strong> {{ user_count }}</div>
+    <div><strong>Staff Users:</strong> {{ staff_count }}</div>
+    <div><strong>Superusers:</strong> {{ superuser_count }}</div>
+    <div><strong>Total Keys:</strong> {{ key_count }}</div>
+    <div><strong>Total Encrypted Files:</strong> {{ file_count }}</div>
+    <div><strong>Latest User:</strong> {% if latest_user %}{{ latest_user.username }}{% else %}N/A{% endif %}</div>
+    <div><strong>Latest File:</strong> {% if latest_file %}{{ latest_file.file_name }}{% else %}N/A{% endif %}</div>
+    <div><strong>Latest Key:</strong> {% if latest_key %}{{ latest_key.key_name }}{% else %}N/A{% endif %}</div>
+  </div>
+  <div class="dashboard-section">
+    <h3>System Statistics</h3>
+    <canvas id="statsChart" width="400" height="200"></canvas>
+    <script id="stats-data" type="application/json">{"users": {{ user_count }}, "files": {{ file_count }}, "keys": {{ key_count }}}</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const stats = JSON.parse(document.getElementById('stats-data').textContent);
+      const ctx = document.getElementById('statsChart').getContext('2d');
+      const statsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Users', 'Files', 'Keys'],
+          datasets: [{
+            label: 'System Statistics',
+            data: [stats.users, stats.files, stats.keys],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(255, 206, 86, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+  </div>
+  <div class="dashboard-section">
+    <h3>Encryption Keys</h3>
+    <table class="admin-table">
+      <tr><th>Name</th><th>Value</th></tr>
+      {% for key in keys %}
+      <tr><td>{{ key.key_name }}</td><td>{{ key.key_value }}</td></tr>
+      {% empty %}<tr><td colspan="2">No keys found.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div class="dashboard-section">
+    <h3>Encrypted Data</h3>
+    <table class="admin-table">
+      <tr><th>Name</th><th>Value</th><th>Key</th></tr>
+      {% for data in encrypted_data %}
+      <tr><td>{{ data.data_name }}</td><td>{{ data.encrypted_value }}</td><td>{{ data.key.key_name }}</td></tr>
+      {% empty %}<tr><td colspan="3">No encrypted data found.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div class="dashboard-section">
+    <h3>Encrypted Files</h3>
+    <table class="admin-table">
+      <tr><th>File Name</th><th>Key</th></tr>
+      {% for file in encrypted_files %}
+      <tr><td>{{ file.file_name }}</td><td>{{ file.key.key_name }}</td></tr>
+      {% empty %}<tr><td colspan="2">No encrypted files found.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div class="dashboard-section">
+    <h3>Users</h3>
+    <table class="admin-table">
+      <tr><th>Username</th><th>Email</th><th>Is Staff</th></tr>
+      {% for user in users %}
+      <tr><td>{{ user.username }}</td><td>{{ user.email }}</td><td>{{ user.is_staff }}</td></tr>
+      {% empty %}<tr><td colspan="3">No users found.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+</div>
+<style>
+.admin-dashboard-container {
+  /* wider layout for admin dashboard */
+  width: 95%;
+  max-width: 1600px;
+  margin: 40px auto;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+  padding: 36px 32px 32px 32px;
+  color: #f1f1f1;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+.admin-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+  color: #00e6d0;
+  text-shadow: 0 2px 12px #00e6d088, 0 1px 0 #fff2;
+}
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 36px;
+  margin-bottom: 36px;
+  background: rgba(44, 83, 100, 0.25);
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 1.15em;
+  box-shadow: 0 4px 16px 0 #00e6d022;
+}
+.dashboard-summary div {
+  background: rgba(0,230,208,0.08);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  color: #00e6d0;
+  box-shadow: 0 2px 8px 0 #00e6d022;
+}
+.dashboard-section {
+  margin-bottom: 32px;
+}
+.dashboard-section h3 {
+  color: #43cea2;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 8px #000a;
+}
+/* responsive improvements: expand summary to 3 columns on wide screens */
+@media (min-width: 1100px) {
+  .dashboard-summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Make chart responsive */
+#statsChart {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 420px;
+  display: block;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: rgba(44, 83, 100, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px 0 #00e6d022;
+}
+.admin-table th, .admin-table td {
+  border: 1.5px solid #00e6d0;
+  padding: 10px 14px;
+  text-align: left;
+  color: #f1f1f1;
+}
+.admin-table th {
+  background: linear-gradient(135deg, #00e6d0 0%, #007991 100%);
+  color: #232526;
+  font-weight: 700;
+}
+.admin-table tr:nth-child(even) {
+  background: rgba(0,230,208,0.07);
+}
+.admin-table tr:hover {
+  background: linear-gradient(135deg, #43cea2 0%, #232526 100%);
+  color: #fff;
+}
+.logout-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #d9534f 0%, #c9302c 100%);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 4px 16px 0 #d9534f55, 0 1.5px 0 #232526;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.logout-btn:hover {
+  background: linear-gradient(135deg, #c9302c 0%, #d9534f 100%);
+  box-shadow: 0 8px 32px 0 #d9534f88, 0 2px 0 #232526;
+}
+</style>
+{% endblock %}

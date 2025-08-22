@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="dashboard-layout">
+  <aside class="dashboard-sidebar">
+    <div class="profile-area">
+      <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=00e6d0&color=fff&size=64" class="profile-avatar" alt="User Avatar">
+      <div class="profile-info">
+        <span class="profile-username">{{ user.username }}</span>
+        <span class="profile-email">{{ user.email }}</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/encryption/generate-key/">Generate Key</a>
+      <a href="/encryption/encrypt-data/">Encrypt Data</a>
+      <a href="/encryption/decrypt-data/">Decrypt Data</a>
+      <a href="/encryption/encrypt-file/">Encrypt File</a>
+      <a href="/encryption/decrypt-file/">Decrypt File</a>
+    </nav>
+  </aside>
+  <main class="dashboard-main">
+    <h2 class="dashboard-title">Your Records & Summary</h2>
+    <div class="dashboard-summary">
+      <div><strong>Your Keys:</strong> {{ key_count }}</div>
+      <div><strong>Your Files:</strong> {{ file_count }}</div>
+      <div><strong>Your Data:</strong> {{ data_count }}</div>
+      <div><strong>Latest Key:</strong> {% if latest_key %}{{ latest_key.key_name }}{% else %}N/A{% endif %}</div>
+      <div><strong>Latest File:</strong> {% if latest_file %}{{ latest_file.file_name }}{% else %}N/A{% endif %}</div>
+      <div><strong>Latest Data:</strong> {% if latest_data %}{{ latest_data.data_name }}{% else %}N/A{% endif %}</div>
+    </div>
+    <div class="dashboard-section collapsible">
+      <h3 onclick="toggleSection(this)">Your Encryption Keys</h3>
+      <div class="collapsible-content">
+        <table class="dashboard-table">
+          <tr><th>Name</th><th>Value</th></tr>
+          {% for key in user_keys %}
+          <tr><td>{{ key.key_name }}</td><td>{{ key.key_value }}</td></tr>
+          {% empty %}<tr><td colspan="2">No keys found.</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+    <div class="dashboard-section collapsible">
+      <h3 onclick="toggleSection(this)">Your Encrypted Files</h3>
+      <div class="collapsible-content">
+        <table class="dashboard-table">
+          <tr><th>File Name</th><th>Key</th></tr>
+          {% for file in user_files %}
+          <tr><td>{{ file.file_name }}</td><td>{{ file.key.key_name }}</td></tr>
+          {% empty %}<tr><td colspan="2">No files found.</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+    <div class="dashboard-section collapsible">
+      <h3 onclick="toggleSection(this)">Your Encrypted Data</h3>
+      <div class="collapsible-content">
+        <table class="dashboard-table">
+          <tr><th>Name</th><th>Value</th><th>Key</th></tr>
+          {% for data in user_data %}
+          <tr><td>{{ data.data_name }}</td><td>{{ data.encrypted_value }}</td><td>{{ data.key.key_name }}</td></tr>
+          {% empty %}<tr><td colspan="3">No data found.</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+    <div class="dashboard-message-area">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="dashboard-message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+  </main>
+</div>
+<script>
+function toggleSection(header) {
+  const content = header.nextElementSibling;
+  content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+document.querySelectorAll('.collapsible-content').forEach(function(el) {
+  el.style.display = 'block';
+});
+</script>
+<style>
+.dashboard-layout {
+  display: flex;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+.dashboard-sidebar {
+  width: 240px;
+  background: linear-gradient(135deg, #00e6d0 0%, #232526 100%);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+  padding: 24px 18px;
+  color: #232526;
+  font-family: 'Montserrat', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.profile-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.profile-avatar {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px #00e6d022;
+}
+.profile-info {
+  text-align: center;
+}
+.profile-username {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.profile-email {
+  font-size: 0.95em;
+  color: #007991;
+}
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 16px;
+}
+.sidebar-nav a {
+  color: #232526;
+  background: #00e6d0;
+  border-radius: 8px;
+  padding: 10px 0;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 2px 8px #00e6d022;
+  transition: background 0.2s, color 0.2s;
+}
+.sidebar-nav a:hover {
+  background: #007991;
+  color: #fff;
+}
+.dashboard-main {
+  flex: 1;
+}
+.dashboard-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+  color: #00e6d0;
+  text-shadow: 0 2px 12px #00e6d088, 0 1px 0 #fff2;
+}
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 36px;
+  margin-bottom: 36px;
+  background: rgba(44, 83, 100, 0.25);
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 1.15em;
+  box-shadow: 0 4px 16px 0 #00e6d022;
+}
+.dashboard-summary div {
+  background: rgba(0,230,208,0.08);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  color: #00e6d0;
+  box-shadow: 0 2px 8px 0 #00e6d022;
+}
+.dashboard-section {
+  margin-bottom: 32px;
+}
+.dashboard-section h3 {
+  color: #43cea2;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 8px #000a;
+  cursor: pointer;
+}
+.collapsible-content {
+  transition: display 0.2s;
+}
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: rgba(44, 83, 100, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px 0 #00e6d022;
+}
+.dashboard-table th, .dashboard-table td {
+  border: 1.5px solid #00e6d0;
+  padding: 10px 14px;
+  text-align: left;
+  color: #f1f1f1;
+}
+.dashboard-table th {
+  background: linear-gradient(135deg, #00e6d0 0%, #007991 100%);
+  color: #232526;
+  font-weight: 700;
+}
+.dashboard-table tr:nth-child(even) {
+  background: rgba(0,230,208,0.07);
+}
+.dashboard-table tr:hover {
+  background: linear-gradient(135deg, #43cea2 0%, #232526 100%);
+  color: #fff;
+}
+.dashboard-message-area {
+  margin: 18px 0;
+}
+.dashboard-message {
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  background: #232526;
+  color: #00e6d0;
+  box-shadow: 0 2px 8px #00e6d022;
+}
+.logout-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #d9534f 0%, #c9302c 100%);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 4px 16px 0 #d9534f55, 0 1.5px 0 #232526;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.logout-btn:hover {
+  background: linear-gradient(135deg, #c9302c 0%, #d9534f 100%);
+  box-shadow: 0 8px 32px 0 #d9534f88, 0 2px 0 #232526;
+}
+@media (max-width: 900px) {
+  .dashboard-layout {
+    flex-direction: column;
+    gap: 0;
+    max-width: 100vw;
+  }
+  .dashboard-sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 18px 8px;
+    margin-bottom: 18px;
+  }
+  .dashboard-main {
+    width: 100%;
+    padding: 0 8px;
+  }
+}
+</style>
+{% endblock %}

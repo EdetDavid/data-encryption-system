@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Decrypt Data{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        Decrypt Data
+    </div>
+    <div class="card-body">
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="data_name" class="form-label">Data Name:</label>
+                <input type="text" id="data_name" name="data_name" class="form-control" required>
+                <div class="invalid-feedback">Please provide a data name.</div>
+            </div>
+            <div class="mb-3">
+                <label for="key_name" class="form-label">Key Name:</label>
+                <input type="text" id="key_name" name="key_name" class="form-control" required>
+                <div class="invalid-feedback">Please provide a key name.</div>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Decrypt</button>
+        </form>
+        {% if decrypted_value %}
+            <div class="alert alert-success mt-3">Decrypted Value: {{ decrypted_value }}</div>
+        {% elif error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+    </div>
+</div>
+<a href="/" class="btn btn-link mt-3">Back to Home</a>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Decrypt File{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            Decrypt File
+        </div>
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="file_name" class="form-label">File Name:</label>
+                    <input type="text" id="file_name" name="file_name" class="form-control" required>
+                    <div class="invalid-feedback">Please provide a file name.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="key_name" class="form-label">Key Name:</label>
+                    <input type="text" id="key_name" name="key_name" class="form-control" required>
+                    <div class="invalid-feedback">Please provide a key name.</div>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Decrypt</button>
+            </form>
+            {% if message %}
+                <div class="alert alert-success mt-3">{{ message }}</div>
+                <p>Decrypted File: <a href="{{ decrypted_file_url }}" download class="btn btn-primary">Download File</a></p>
+            {% elif error %}
+                <div class="alert alert-danger mt-3">{{ error }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <a href="/" class="btn btn-link mt-3">Back to Home</a>
+</div>
+{% endblock %}
