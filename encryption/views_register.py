@@ -193,8 +193,18 @@ def _send_verification_email(*, to_email: str, username: str, code: str) -> None
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
+        email = request.POST.get('email', '').strip()
+        if not email:
+            return render(request, "encryption/registration/register.html", {"form": form, "error": "Email is required."})
+
+        User = get_user_model()
+        if User.objects.filter(email__iexact=email).exists():
+            return render(request, "encryption/registration/register.html", {"form": form, "error": "Email already in use."})
+
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.email = email
+            user.save()
             auth_login(request, user)
             return redirect("dashboard")
     else:
