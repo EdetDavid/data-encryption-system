@@ -161,44 +161,44 @@ def _send_via_resend(to_email: str, subject: str, text: str, html: str) -> bool:
             return False
                 
 
-    def _send_via_brevo_api(to_email: str, subject: str, text: str, html: str) -> bool:
-        """Send email through Brevo (Sendinblue) REST API using BREVO_API_KEY.
-        This is HTTPS-based so it works on hosts that block SMTP (for example PythonAnywhere free).
-        """
-        api_key = getattr(settings, 'BREVO_API_KEY', None) or os.environ.get('BREVO_API_KEY')
-        if not api_key:
-            return False
-        if not requests:
-            logger.warning("requests not available; cannot use Brevo REST API")
-            return False
+def _send_via_brevo_api(to_email: str, subject: str, text: str, html: str) -> bool:
+    """Send email through Brevo (Sendinblue) REST API using BREVO_API_KEY.
+    This is HTTPS-based so it works on hosts that block SMTP (for example PythonAnywhere free).
+    """
+    api_key = getattr(settings, 'BREVO_API_KEY', None) or os.environ.get('BREVO_API_KEY')
+    if not api_key:
+        return False
+    if not requests:
+        logger.warning("requests not available; cannot use Brevo REST API")
+        return False
 
-        url = "https://api.brevo.com/v3/smtp/email"
-        headers = {
-            'api-key': api_key,
-            'Content-Type': 'application/json',
-        }
-        payload = {
-            'sender': {'email': getattr(settings, 'DEFAULT_FROM_EMAIL', 'onboarding@resend.dev').split('<')[-1].strip('>') , 'name': getattr(settings, 'DEFAULT_FROM_EMAIL', 'Data Security').split('<')[0].strip()},
-            'to': [{'email': to_email}],
-            'subject': subject,
-            'textContent': text,
-            'htmlContent': html,
-        }
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        'api-key': api_key,
+        'Content-Type': 'application/json',
+    }
+    payload = {
+        'sender': {'email': getattr(settings, 'DEFAULT_FROM_EMAIL', 'onboarding@resend.dev').split('<')[-1].strip('>') , 'name': getattr(settings, 'DEFAULT_FROM_EMAIL', 'Data Security').split('<')[0].strip()},
+        'to': [{'email': to_email}],
+        'subject': subject,
+        'textContent': text,
+        'htmlContent': html,
+    }
 
+    try:
+        resp = requests.post(url, headers=headers, json=payload, timeout=10)
         try:
-            resp = requests.post(url, headers=headers, json=payload, timeout=10)
-            try:
-                body = resp.json()
-            except Exception:
-                body = resp.text
-            if resp.status_code in (200, 201, 202):
-                logger.info("Brevo API send ok: status=%s body=%s", resp.status_code, body)
-                return True
-            logger.warning("Brevo API send failed: status=%s body=%s", resp.status_code, body)
-            return False
-        except Exception as exc:
-            _log_exception("Brevo API send failed", exc)
-            return False
+            body = resp.json()
+        except Exception:
+            body = resp.text
+        if resp.status_code in (200, 201, 202):
+            logger.info("Brevo API send ok: status=%s body=%s", resp.status_code, body)
+            return True
+        logger.warning("Brevo API send failed: status=%s body=%s", resp.status_code, body)
+        return False
+    except Exception as exc:
+        _log_exception("Brevo API send failed", exc)
+        return False
 
 
 def _send_via_smtp(to_email: str, subject: str, text: str) -> bool:
