@@ -181,3 +181,8 @@ else:
     EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'false').lower() in ('1', 'true', 'yes')
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Your App <no-reply@yourdomain.com>")
+
+# Optional API keys used by the app for HTTPS email providers
+# Prefer setting these as environment variables in production (e.g. on PythonAnywhere)
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
